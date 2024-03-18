@@ -56,9 +56,21 @@ const miloLibs = setLibs(LIBS);
   });
 }());
 
-(async function loadPage() {
+async function loadPage() {
   const { loadArea, setConfig } = await import(`${miloLibs}/utils/utils.js`);
   const config = setConfig({ ...CONFIG, miloLibs });
   console.log(config);
   await loadArea();
+}
+
+(async function daPreview() {
+  const { searchParams } = new URL(window.location.href);
+  const daPreview = searchParams.get('dapreview');
+  if (daPreview) {
+    const origin = daPreview === 'local' ? 'http://localhost:3000' : 'https://da.live';
+    const { default: livePreview } = await import(`${origin}/scripts/dapreview.js`);
+    livePreview(loadPage);
+  }
 }());
+
+loadPage();
